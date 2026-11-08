@@ -12,14 +12,25 @@ from waste_assistant.shared.schemas import Prediction
 
 
 class Predictor:
-    def __init__(self, directory: Path):
+    def __init__(
+        self,
+        directory: Path,
+        *,
+        max_pixels: int | None = None,
+        formats: tuple[str, ...] | None = None,
+    ):
         self.artifact, self.model = load_model(directory)
         self.transform = self.artifact.preprocessing.transform()
+        artifact_limit = self.artifact.preprocessing.max_pixels
+        self.max_pixels = (
+            artifact_limit if max_pixels is None else min(max_pixels, artifact_limit)
+        )
+        self.formats = formats
 
     @torch.inference_mode()
     def predict(self, image_bytes: bytes) -> Prediction:
         tensor = image_tensor(
-            image_bytes, self.artifact.preprocessing.max_pixels, self.transform
+            image_bytes, self.max_pixels, self.transform, formats=self.formats
         )
         score, index = self.model(tensor.unsqueeze(0)).softmax(dim=1).max(dim=1)
         return Prediction(
@@ -40,7 +51,9 @@ def main() -> None:
         if settings.model is None:
             raise ValueError("Prediction requires model configuration")
         torch.set_num_threads(settings.model.cpu_threads)
-        predictor = Predictor(settings.model.artifact_dir)
+        predictor = Predictor(
+            settings.model.artifact_dir, max_pixels=settings.limits.max_decoded_pixels
+        )
         with args.image.open("rb") as source:
             image = source.read(settings.limits.max_upload_bytes + 1)
         if len(image) > settings.limits.max_upload_bytes:

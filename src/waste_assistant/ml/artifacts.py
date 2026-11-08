@@ -87,15 +87,25 @@ def preprocessing_from_weights(max_pixels: int) -> Preprocessing:
     )
 
 
-def image_tensor(data: bytes, max_pixels: int, transform, *, flip: bool = False):
+class InvalidImage(ValueError):
+    """The image bytes could not be decoded within the configured limits."""
+
+
+def image_tensor(
+    data: bytes, max_pixels: int, transform, *, flip: bool = False, formats=None
+):
     try:
-        with Image.open(io.BytesIO(data)) as image:
+        with Image.open(io.BytesIO(data), formats=formats) as image:
             if image.width * image.height > max_pixels:
-                raise ValueError("Image exceeds the decoded pixel limit")
+                raise InvalidImage("Image exceeds the decoded pixel limit")
             rgb = ImageOps.exif_transpose(image).convert("RGB")
-            return transform(ImageOps.mirror(rgb) if flip else rgb)
     except Image.DecompressionBombError as error:
-        raise ValueError("Image exceeds the decoded pixel limit") from error
+        raise InvalidImage("Image exceeds the decoded pixel limit") from error
+    except InvalidImage:
+        raise
+    except (OSError, SyntaxError, ValueError) as error:
+        raise InvalidImage("Could not decode the image") from error
+    return transform(ImageOps.mirror(rgb) if flip else rgb)
 
 
 def create_model(class_count: int, *, pretrained: bool = False) -> nn.Module:

@@ -38,6 +38,8 @@ Setup was checked on Windows using a CPU-only Python environment.
 - The offline model commands train a six-class MobileNetV3-Small classifier,
   evaluate the saved model, and classify local photos. See the
   [model instructions and results](docs/model.md).
+- The local inference worker loads that classifier once and accepts one image
+  at a time over HTTP. See the [worker setup and API](docs/worker.md).
 
 The configuration describes one gateway and three loopback workers. Each
 future worker will have one inference slot. The gateway will own its queues
@@ -50,9 +52,8 @@ implemented. The configured locality is for demonstration.
 
 ## Next milestones
 
-Phase 3 will wrap the exported classifier in one inference worker that loads
-the artifact at startup. Phase 4 will deliver the first upload-to-guidance
-flow.
+Phase 4 will connect a single worker to a gateway and deliver the first
+upload-to-guidance flow.
 
 Later experiments will compare round-robin, least-outstanding, and estimated
 completion time with a fixed model and matched workloads. See the

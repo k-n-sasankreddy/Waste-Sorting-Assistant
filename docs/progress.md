@@ -50,6 +50,21 @@ The similarity audit can miss separate views of the same object.
 - Dependency verification, all eight tests, and Ruff lint and format checks
   passed. See the [model instructions and results](model.md) for details.
 
-Phase 3 starts on request and will serve the exported classifier through one
-worker with bounded inference and readiness checks. External real-world
-classifier evaluation remains open.
+External real-world classifier evaluation remains open.
+
+## Phase 3 — One inference worker
+
+- Added the FastAPI worker, pinned HTTP dependencies, and the
+  [worker setup and API guide](worker.md). The worker loads and warms one
+  checksum-verified model at startup and exposes health, readiness, and status.
+- Added one admission slot, bounded multipart uploads, and a dedicated
+  inference thread. Concurrent inference is rejected, and a timed-out
+  computation retains its slot until it finishes.
+- Verified the real Phase 2 model over localhost HTTP. Its label, score, and
+  model version matched the standalone predictor exactly. An invalid image
+  returned 422, and status reported the execution outcomes.
+- All 11 tests and Ruff checks passed. Tests covered missing weights, oversized
+  uploads, responsive health during inference, and slot retention after timeout.
+
+Phase 4 starts on request and will connect a single worker to a gateway with
+abstention, demo locality guidance, and the first user upload interface.

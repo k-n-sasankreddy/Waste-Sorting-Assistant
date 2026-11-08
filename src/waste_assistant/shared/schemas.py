@@ -5,6 +5,9 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, PositiveInt, StringConstraints
 
 NonEmpty = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
+RequestIdentifier = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=128)
+]
 Score = Annotated[float, Field(ge=0, le=1)]
 DurationMs = Annotated[float, Field(ge=0)]
 Material = Literal["glass", "paper", "cardboard", "plastic", "metal", "trash"]
@@ -25,8 +28,8 @@ class ClassificationFields(Contract):
 class InferenceFields(Contract):
     """Metadata sent with an image to a worker."""
 
-    request_id: NonEmpty
-    attempt_id: NonEmpty
+    request_id: RequestIdentifier
+    attempt_id: RequestIdentifier
     remaining_budget_ms: PositiveInt
 
 
@@ -75,3 +78,7 @@ class WorkerStatus(Contract):
     model_version: NonEmpty | None = None
     preprocessing_version: NonEmpty | None = None
     label_mapping_version: NonEmpty | None = None
+    warmup_ms: DurationMs | None = None
+    completed_inferences: Annotated[int, Field(ge=0)] = 0
+    failed_inferences: Annotated[int, Field(ge=0)] = 0
+    last_processing_ms: DurationMs | None = None
