@@ -52,6 +52,15 @@ class WorkerSettings(Contract):
     model_path: Path
 
 
+class DatasetSettings(Contract):
+    image_root: Path
+    output_dir: Path
+    source_url: HttpUrl
+    seed: Annotated[int, Field(ge=0)]
+    near_duplicate_distance: Annotated[int, Field(ge=0, le=128)] = 4
+    same_object_groups: Path | None = None
+
+
 class Settings(Contract):
     gateway_port: Annotated[int, Field(ge=1, le=65535)]
     locality_id: Identifier
@@ -59,6 +68,7 @@ class Settings(Contract):
     limits: Limits
     adaptive: AdaptiveSettings
     workers: Annotated[list[WorkerSettings], Field(min_length=1)]
+    dataset: DatasetSettings | None = None
 
     @model_validator(mode="after")
     def check_worker_uniqueness(self) -> Self:

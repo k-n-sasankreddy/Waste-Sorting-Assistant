@@ -1,0 +1,7 @@
+{"kind": "exact", "left": "glass/glass115.jpg", "right": "metal/metal91.jpg"}
+{"distance": 4, "kind": "near_candidate", "left": "paper/paper185.jpg", "right": "paper/paper390.jpg"}
+{"distance": 3, "kind": "near_candidate", "left": "paper/paper459.jpg", "right": "paper/paper466.jpg"}
+{"distance": 4, "kind": "near_candidate", "left": "paper/paper522.jpg", "right": "paper/paper534.jpg"}
+{"distance": 3, "kind": "near_candidate", "left": "paper/paper147.jpg", "right": "paper/paper99.jpg"}
+{"kind": "exact", "left": "glass/glass176.jpg", "right": "plastic/plastic152.jpg"}
+{"kind": "exact", "left": "glass/glass389.jpg", "right": "plastic/plastic332.jpg"}

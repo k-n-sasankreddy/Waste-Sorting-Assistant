@@ -1,0 +1,49 @@
+{
+  "accepted": 2521,
+  "decoded": 2527,
+  "duplicate_groups": 7,
+  "links_by_kind": {
+    "exact": 3,
+    "near_candidate": 4
+  },
+  "manifest_version": 1,
+  "max_pixels": 20000000,
+  "near_duplicate_distance": 4,
+  "rejected_by_reason": {
+    "conflicting_group_labels": 6
+  },
+  "scanned": 2527,
+  "seed": 42,
+  "source_url": "https://github.com/garythung/trashnet/blob/6fa2b878c6c1b4304b91109070ce0edf9279bb31/data/dataset-resized.zip",
+  "split_counts": {
+    "test": {
+      "cardboard": 60,
+      "glass": 75,
+      "metal": 61,
+      "paper": 89,
+      "plastic": 72,
+      "trash": 20
+    },
+    "train": {
+      "cardboard": 282,
+      "glass": 348,
+      "metal": 286,
+      "paper": 416,
+      "plastic": 336,
+      "trash": 96
+    },
+    "validation": {
+      "cardboard": 61,
+      "glass": 75,
+      "metal": 62,
+      "paper": 89,
+      "plastic": 72,
+      "trash": 21
+    }
+  },
+  "target_percentages": {
+    "test": 15,
+    "train": 70,
+    "validation": 15
+  }
+}

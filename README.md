@@ -6,7 +6,7 @@ assigns it to a worker running a full copy of the classifier, interprets the
 prediction, and looks up guidance for the selected locality. A material
 prediction alone cannot determine how an item should be discarded.
 
-## Phase 0 setup
+## Development setup
 
 Use Python 3.12 and run the commands from the repository root.
 
@@ -22,7 +22,7 @@ py -3.12 -m venv .venv
 
 On Linux, create the environment with `python3.12 -m venv .venv` and replace
 `.\.venv\Scripts\python.exe` in the remaining commands with `.venv/bin/python`.
-Phase 0 was checked on Windows using a CPU-only Python environment.
+Setup was checked on Windows using a CPU-only Python environment.
 
 ## What runs today
 
@@ -33,6 +33,8 @@ Phase 0 was checked on Windows using a CPU-only Python environment.
   guidance, and errors that the future services will exchange.
 - The pytest fixture returns a fixed, explicitly synthetic score. It is outside
   the installed package, and the API prediction schema rejects its score type.
+- The offline dataset command audits TrashNet and produces reproducible,
+  group-aware splits. See the [dataset instructions](docs/dataset.md).
 
 The configuration describes one gateway and three loopback workers. Each
 future worker will have one inference slot. The gateway will own its queues
@@ -45,10 +47,9 @@ implemented. The configured locality is for demonstration.
 
 ## Next milestones
 
-Phase 1 will audit [TrashNet](https://github.com/garythung/trashnet) and generate
-reproducible splits with duplicate groups kept together. Phase 2 will train and
-evaluate a transfer-learning classifier offline and export its weights, class
-mapping, and preprocessing. That will be the first real model. Serving workers
+Phase 2 will train and evaluate a transfer-learning classifier offline from the
+Phase 1 manifests and export its weights, class mapping, and preprocessing.
+That will be the first real model. Serving workers
 will load that artifact and use it to predict categories for new images. Phase 4
 will deliver the first upload-to-guidance flow.
 

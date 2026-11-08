@@ -1,6 +1,12 @@
 gateway_port: 8000
 locality_id: demo-locality
 policy: round_robin
+dataset:
+  image_root: data/raw/dataset-resized
+  output_dir: data/manifests/trashnet-v1
+  source_url: https://github.com/garythung/trashnet/blob/6fa2b878c6c1b4304b91109070ce0edf9279bb31/data/dataset-resized.zip
+  seed: 42
+  near_duplicate_distance: 4
 limits:
   max_upload_bytes: 5242880
   max_decoded_pixels: 20000000
