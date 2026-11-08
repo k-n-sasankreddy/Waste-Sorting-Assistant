@@ -47,6 +47,9 @@ def show_status() -> None:
                 "Active": worker["active"],
                 "Assigned": worker["assigned"],
                 "Completed": worker["completed"],
+                "Estimated service (ms)": round(worker["estimated_service_ms"], 2)
+                if worker["estimated_service_ms"] is not None
+                else None,
                 "Model version": worker["model_version"],
             }
             for worker in status["workers"]

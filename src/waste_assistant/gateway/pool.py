@@ -1,16 +1,21 @@
 """Event-loop-owned worker registry, FIFO queues, and dispatch tasks."""
 
 import asyncio
+import json
+import logging
 from collections import deque
 from dataclasses import dataclass, field
+from time import perf_counter
 
 import httpx
 from pydantic import ValidationError
 
-from waste_assistant.gateway.scheduling import choose_worker
+from waste_assistant.gateway.scheduling import choose_worker, estimated_completion_ms
 from waste_assistant.shared.config import Settings, WorkerSettings
 from waste_assistant.shared.http import RequestProblem
 from waste_assistant.shared.schemas import InferenceResponse, WorkerStatus
+
+LOGGER = logging.getLogger("uvicorn.error")
 
 
 @dataclass(eq=False)
@@ -28,9 +33,15 @@ class Worker:
     wake: asyncio.Event = field(default_factory=asyncio.Event)
     status: WorkerStatus | None = None
     seen_at: float = 0.0
-    active: bool = False
+    active_since: float | None = None
+    estimated_service_ms: float | None = None
+    estimate_boot_id: str | None = None
     assigned: int = 0
     completed: int = 0
+
+    @property
+    def active(self) -> bool:
+        return self.active_since is not None
 
 
 def fingerprint(status: WorkerStatus) -> tuple | None:
@@ -47,6 +58,7 @@ class WorkerPool:
         self.loop = asyncio.get_running_loop()
         self.limits = settings.limits
         self.policy = settings.policy
+        self.adaptive = settings.adaptive
         self.client = client
         self.infer = infer
         selected = settings.gateway.worker_id
@@ -65,6 +77,7 @@ class WorkerPool:
             worker.status is not None
             and self.expected is not None
             and fingerprint(worker.status) == self.expected
+            and worker.estimated_service_ms is not None
             and self.loop.time() - worker.seen_at <= self.limits.status_stale_seconds
         )
 
@@ -84,6 +97,7 @@ class WorkerPool:
         # No await between selection, reservation and accounting.
         if self.loop.time() >= deadline:
             raise TimeoutError
+        decision_start = perf_counter()
         ready = [self.available(worker) for worker in self.workers]
         if not any(ready):
             raise RequestProblem(
@@ -93,13 +107,13 @@ class WorkerPool:
             raise RequestProblem(
                 429, "gateway_busy", "The queued image budget is full."
             )
-        loads = [
-            len(worker.queue) + worker.active
+        scores = [
+            self.score(worker, decision_start)
             if available and len(worker.queue) < self.limits.max_waiting_per_worker
             else None
             for worker, available in zip(self.workers, ready, strict=True)
         ]
-        index = choose_worker(self.policy, loads, self.cursor)
+        index = choose_worker(self.policy, scores, self.cursor)
         if index is None:
             raise RequestProblem(
                 429, "gateway_busy", "Worker queues are full. Try again shortly."
@@ -112,7 +126,40 @@ class WorkerPool:
         worker.assigned += 1
         self.cursor = (index + 1) % len(self.workers)
         worker.wake.set()
+        if LOGGER.isEnabledFor(logging.INFO):
+            LOGGER.info(
+                "scheduler_decision %s",
+                json.dumps(
+                    {
+                        "request_id": request_id,
+                        "policy": self.policy,
+                        "worker_id": worker.config.id,
+                        "image_bytes": len(image),
+                        "scores": {
+                            w.config.id: score
+                            for w, score in zip(self.workers, scores, strict=True)
+                        },
+                        "decision_ms": (perf_counter() - decision_start) * 1000,
+                    }
+                ),
+            )
         return worker, job
+
+    def score(self, worker: Worker, now: float) -> float:
+        if self.policy != "adaptive":
+            return len(worker.queue) + worker.active
+        assert worker.estimated_service_ms is not None
+        elapsed = (
+            (now - worker.active_since) * 1000
+            if worker.active_since is not None
+            else None
+        )
+        return estimated_completion_ms(
+            worker.estimated_service_ms,
+            len(worker.queue),
+            elapsed,
+            self.adaptive.residual_floor_fraction,
+        )
 
     def withdraw(self, worker: Worker, job: Job) -> None:
         if job in worker.queue:
@@ -142,8 +189,20 @@ class WorkerPool:
         )
         for worker, status in zip(self.workers, statuses, strict=True):
             worker.status, worker.seen_at = status, self.loop.time()
-            if self.expected is None and status is not None:
-                self.expected = fingerprint(status)
+            if status is not None and status.boot_id != worker.estimate_boot_id:
+                worker.estimated_service_ms = None
+                worker.estimate_boot_id = None
+            if (
+                worker.estimated_service_ms is None
+                and status is not None
+                and status.warmup_ms is not None
+                and status.warmup_ms > 0
+            ):
+                versions = fingerprint(status)
+                if versions is not None and self.expected in (None, versions):
+                    self.expected = versions
+                    worker.estimated_service_ms = status.warmup_ms
+                    worker.estimate_boot_id = status.boot_id
 
     async def monitor(self) -> None:
         while True:
@@ -156,7 +215,6 @@ class WorkerPool:
             while worker.queue:
                 job = worker.queue.popleft()
                 self.queued_bytes -= len(job.image)
-                worker.active = True
                 try:
                     if job.deadline <= self.loop.time():
                         raise TimeoutError
@@ -166,8 +224,11 @@ class WorkerPool:
                             "worker_unavailable",
                             "The assigned worker is unavailable.",
                         )
+                    dispatch_start = worker.active_since = perf_counter()
+                    boot_id = worker.estimate_boot_id
                     async with asyncio.timeout_at(job.deadline):
                         result = await self.infer(self.client, worker.config, job)
+                    dispatch_ms = (perf_counter() - dispatch_start) * 1000
                     actual = (
                         result.prediction.model_version,
                         result.preprocessing_version,
@@ -181,13 +242,35 @@ class WorkerPool:
                             "The worker model is incompatible.",
                         )
                     worker.completed += 1
+                    if (
+                        boot_id == worker.estimate_boot_id
+                        and worker.estimated_service_ms is not None
+                    ):
+                        alpha = self.adaptive.alpha
+                        worker.estimated_service_ms = (
+                            alpha * dispatch_ms
+                            + (1 - alpha) * worker.estimated_service_ms
+                        )
+                    if LOGGER.isEnabledFor(logging.INFO):
+                        LOGGER.info(
+                            "scheduler_sample %s",
+                            json.dumps(
+                                {
+                                    "request_id": job.request_id,
+                                    "worker_id": worker.config.id,
+                                    "dispatch_ms": dispatch_ms,
+                                    "worker_processing_ms": result.processing_ms,
+                                    "estimated_service_ms": worker.estimated_service_ms,
+                                }
+                            ),
+                        )
                     if not job.result.done():
                         job.result.set_result(result)
                 except Exception as error:
                     if not job.result.done():
                         job.result.set_exception(error)
                 finally:
-                    worker.active = False
+                    worker.active_since = None
             worker.wake.clear()
 
     def snapshot(self) -> dict:
@@ -208,6 +291,7 @@ class WorkerPool:
                     "active": worker.active,
                     "assigned": worker.assigned,
                     "completed": worker.completed,
+                    "estimated_service_ms": worker.estimated_service_ms,
                 }
                 for worker in self.workers
             ],

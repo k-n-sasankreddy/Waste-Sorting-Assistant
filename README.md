@@ -44,8 +44,8 @@ Setup was checked on Windows using a CPU-only Python environment.
   review prompts, and demonstration guidance. See the
   [local startup guide](docs/demo.md).
 - The gateway distributes requests across three local model replicas using
-  round-robin or least-outstanding. The Worker status page shows queue depth
-  and per-worker assignment counts.
+  round-robin, least-outstanding, or estimated completion time. The Worker
+  status page shows queue depth, assignments, and service estimates.
 
 The configuration describes one gateway and three loopback workers. Each
 future worker will have one inference slot. The gateway will own its queues
@@ -58,7 +58,7 @@ implemented. The configured locality is for demonstration.
 
 ## Next milestones
 
-Phase 6 will add estimated-completion-time scheduling.
+Phase 7 will cover worker failure, recovery, and LAN execution.
 
 Later experiments will compare round-robin, least-outstanding, and estimated
 completion time with a fixed model and matched workloads. See the

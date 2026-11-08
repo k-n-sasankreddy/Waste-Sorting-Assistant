@@ -50,14 +50,17 @@ structured errors with a request ID.
 
 The default `policy: round_robin` rotates across eligible workers.
 Set `policy: least_outstanding` and restart the gateway to prefer the smallest
-sum of active and waiting requests, with rotating ties. To run one worker
+sum of active and waiting requests. Set `policy: adaptive` to prefer the
+earliest estimated completion. Ties rotate among eligible workers.
+To run one worker
 only, set `gateway.worker_id` to its configured ID. The gateway runs as one
 process. Its admission and queue updates are synchronous on that process's
 event loop.
 
 Open **Worker status** in the Streamlit sidebar to see worker eligibility,
-model versions, waiting and active counts, and cumulative assignments and
-completions. The same data is available at `GET /v1/system/status`.
+model versions, waiting and active counts, the estimated service time, and
+cumulative assignments and completions. The same data is available at
+`GET /v1/system/status`.
 This setup is local multi-process emulation. The workers share one machine
 and each loads a full copy of the model.
 
@@ -73,6 +76,30 @@ jobs per worker, and 64 MiB of queued image payloads. Each upload is capped
 at 5 MiB plus bounded multipart overhead. Active and uploading images count
 against the global request limit and can use memory beyond the queued-byte
 limit, along with multipart buffers and HTTP transport copies.
+
+### Adaptive estimate
+
+For each eligible worker, the scheduler adds the estimated remaining time
+of the active request to the service estimate multiplied by the number of
+waiting requests plus one. For an active worker, remaining time is the
+larger of estimated service minus elapsed time and
+`residual_floor_fraction × estimated service`. The remaining time is zero
+for an idle worker. The default floor is 10%.
+
+The worker's measured model warm-up seeds the estimate for its current boot.
+Warm-up measures local processing, so it serves as a starting proxy. After
+each successful compatible dispatch, the gateway updates the estimate with
+an exponentially weighted moving average. The default `alpha: 0.2` gives the
+latest sample 20% weight. Samples include HTTP transfer and worker
+processing and exclude time spent waiting at the gateway. Failed or timed-out
+dispatches do not update the estimate.
+
+Gateway logs include `scheduler_decision` events with a JSON payload for
+each assignment. The payload records the request ID, policy, image size,
+selected worker, and candidate scores. Adaptive scores use milliseconds.
+`scheduler_sample` records dispatch and worker processing durations separately
+for successful results. Sudden slowdowns take time to show up in the moving
+average.
 
 The worker includes the review threshold from its saved model artifact.
 The gateway applies that threshold before consulting the versioned

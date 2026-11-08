@@ -91,4 +91,19 @@ External real-world classifier evaluation remains open.
 - Verified the dashboard against the live gateway. The test suite covers
   queue bounds, expiration accounting, FIFO order, and incompatible models.
 
-Phase 6 starts on request and will add estimated-completion-time scheduling.
+## Phase 6 — Adaptive scheduling
+
+- Added estimated-completion-time scheduling with rotating ties, a
+  configurable residual floor, warm-up seeding, and a per-worker moving
+  average of successful dispatch times.
+- Added assignment and timing logs plus a dashboard column for service
+  estimates. Tests cover hand-calculated scores, stale and incompatible
+  workers, queue limits, and successful versus failed timing samples.
+- In a same-machine smoke test with three trained-model replicas, an
+  injected 300 ms processing delay raised worker 2's estimate from 30.0 ms
+  to 89.0 ms after one successful sample. All ten subsequent uploads
+  went to worker 3. This check demonstrates routing feedback under one
+  controlled slowdown.
+
+Phase 7 starts on request and will cover worker failure, recovery, and LAN
+execution.

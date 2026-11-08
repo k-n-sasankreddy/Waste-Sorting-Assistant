@@ -41,6 +41,7 @@ def gateway(monkeypatch):
                     "model_version": "example-model",
                     "preprocessing_version": "prep",
                     "label_mapping_version": "labels",
+                    "warmup_ms": 5,
                 },
             )
         if "started" in upstream:

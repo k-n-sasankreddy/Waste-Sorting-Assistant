@@ -84,8 +84,6 @@ def create_app(
 ) -> FastAPI:
     if settings.gateway is None:
         raise ValueError("Gateway configuration is missing")
-    if settings.policy not in ("round_robin", "least_outstanding"):
-        raise ValueError("Choose round_robin or least_outstanding for Phase 5")
     rules = load_rules(settings.gateway.rules_path)
     if rules.locality_id != settings.locality_id:
         raise ValueError("Gateway locality must match the demo ruleset")
