@@ -1,0 +1,15 @@
+# Phase 0 development dependencies resolved with Python 3.12 on Windows.
+annotated-types==0.8.0
+colorama==0.4.6; sys_platform == "win32"
+iniconfig==2.3.1
+packaging==26.3
+pluggy==1.7.0
+pydantic==2.12.5
+pydantic-core==2.41.5
+pygments==2.21.0
+pytest==9.0.2
+PyYAML==6.0.3
+ruff==0.15.0
+setuptools==80.9.0
+typing-extensions==4.16.0
+typing-inspection==0.4.5

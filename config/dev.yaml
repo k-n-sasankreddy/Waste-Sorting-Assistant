@@ -1,0 +1,26 @@
+gateway_port: 8000
+locality_id: demo-locality
+policy: round_robin
+limits:
+  max_upload_bytes: 5242880
+  max_decoded_pixels: 20000000
+  max_outstanding: 64
+  max_waiting_per_worker: 16
+  max_queued_image_bytes: 67108864
+  request_budget_seconds: 10.0
+  health_poll_seconds: 1.0
+  status_stale_seconds: 3.0
+  max_retries: 1
+adaptive:
+  alpha: 0.2
+  residual_floor_fraction: 0.1
+workers:
+  - id: worker-1
+    url: http://127.0.0.1:8101
+    model_path: artifacts/models/mobilenet-v3-small
+  - id: worker-2
+    url: http://127.0.0.1:8102
+    model_path: artifacts/models/mobilenet-v3-small
+  - id: worker-3
+    url: http://127.0.0.1:8103
+    model_path: artifacts/models/mobilenet-v3-small
