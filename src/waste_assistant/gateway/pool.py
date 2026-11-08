@@ -34,6 +34,7 @@ class Job:
     queued_worker: Worker | None = None
     attempt_id: str | None = None
     attempts: int = 0
+    queued_at: float = 0.0
 
 
 @dataclass
@@ -143,6 +144,7 @@ class WorkerPool:
             )
         worker = self.workers[index]
         job.queued_worker = worker
+        job.queued_at = perf_counter()
         worker.queue.append(job)
         self.queued_bytes += len(job.image)
         worker.assigned += 1
@@ -371,6 +373,8 @@ class WorkerPool:
                         "boot_id": boot_id,
                         "outcome": outcome,
                         "attempt_number": job.attempts,
+                        "queue_ms": (dispatch_start - job.queued_at) * 1000,
+                        "dispatch_ms": (perf_counter() - dispatch_start) * 1000,
                     }
                 ),
             )

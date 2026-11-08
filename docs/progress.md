@@ -119,5 +119,17 @@ External real-world classifier evaluation remains open.
 - Documented [LAN setup](recovery.md). A separate LAN host was unavailable
   for verification.
 
-Phase 8 starts on request and will compare policies with reproducible
-workloads and reports.
+## Phase 8 — Controlled scheduling evaluation
+
+- Added seeded, bounded open-loop replay, randomized matched policy trials,
+  and reporting from per-arrival and per-attempt logs.
+- Completed 72 primary and 12 extended recovery trials on a single Windows
+  host. Verified all 12,984 offered arrivals against the raw outcome counts
+  and verified matching trace checksums for each policy group.
+- Published per-run metrics, evidence indices and plots. Adaptive led the
+  heterogeneous and slowdown latency comparisons. Least-outstanding led
+  the ramp on median run p95 and successful completions.
+- All 25 tests, dependency and Ruff checks passed. See the
+  [benchmark guide and recorded results](benchmark.md).
+
+Phase 9 starts on request and will package the demonstration and submission.

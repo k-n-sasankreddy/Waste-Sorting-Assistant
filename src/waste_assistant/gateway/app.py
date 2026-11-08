@@ -2,7 +2,9 @@
 
 import argparse
 import asyncio
+import json
 import logging
+import re
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
@@ -29,6 +31,7 @@ from waste_assistant.shared.schemas import (
 )
 
 LOGGER = logging.getLogger(__name__)
+BENCHMARK_LOGGER = logging.getLogger("uvicorn.error")
 
 
 async def infer_worker(
@@ -115,6 +118,31 @@ def create_app(
 
     app = FastAPI(title="Waste Sorting Assistant gateway", lifespan=lifespan)
 
+    @app.middleware("http")
+    async def benchmark_telemetry(request: Request, call_next):
+        trace_id = request.headers.get("x-benchmark-id", "")
+        if request.url.path != "/v1/classify" or not re.fullmatch(
+            r"[A-Za-z0-9-]{1,64}", trace_id
+        ):
+            return await call_next(request)
+        status = None
+        try:
+            response = await call_next(request)
+            status = response.status_code
+            return response
+        finally:
+            BENCHMARK_LOGGER.info(
+                "benchmark_terminal %s",
+                json.dumps(
+                    {
+                        "trace_id": trace_id,
+                        "request_id": getattr(request.state, "request_id", None),
+                        "admitted": getattr(request.state, "admitted", False),
+                        "status": status,
+                    }
+                ),
+            )
+
     @app.get("/health")
     async def health() -> dict[str, str]:
         return {"status": "ok"}
@@ -143,6 +171,7 @@ def create_app(
         request: Request,
     ) -> ClassificationResponse | JSONResponse:
         request_id = uuid4().hex
+        request.state.request_id = request_id
         pool = request.app.state.pool
         deadline = pool.loop.time() + budget
         reserved = False
@@ -161,6 +190,7 @@ def create_app(
                         "Select the supported demo locality.",
                     )
                 queued = pool.enqueue(request_id, image, deadline)
+                request.state.admitted = True
                 result = await asyncio.shield(queued[1].result)
                 return classify(fields, result, rules)
         except RequestProblem as error:

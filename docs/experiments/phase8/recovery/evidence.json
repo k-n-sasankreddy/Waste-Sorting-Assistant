@@ -1,0 +1,389 @@
+{
+  "seed": 42,
+  "repetitions": 3,
+  "scenarios": [
+    "recovery"
+  ],
+  "hardware": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 189 Stepping 1, GenuineIntel",
+    "cpu_model": "Intel Core Ultra 7 258V",
+    "logical_cpus": 8,
+    "python": "3.12.14",
+    "threads_per_worker": 1,
+    "deployment": "same-machine multi-process",
+    "packages": {
+      "torch": "2.12.0+cpu",
+      "torchvision": "0.27.0+cpu",
+      "httpx": "0.28.1",
+      "uvicorn": "0.54.0"
+    }
+  },
+  "model": {
+    "architecture": "mobilenet_v3_small",
+    "weights_sha256": "55e9bdf7f40a1be5028f124e026627e52c2a39d084cb6ccf6467970fa4aca52f",
+    "labels": [
+      "cardboard",
+      "glass",
+      "metal",
+      "paper",
+      "plastic",
+      "trash"
+    ],
+    "preprocessing": {
+      "version": "rgb-exif-resize-crop-v1",
+      "resize_short_edge": 256,
+      "crop_size": 224,
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "interpolation": "bilinear",
+      "max_pixels": 20000000
+    }
+  },
+  "generator_in_flight_limit": 64,
+  "generator_max_lateness_ms": 100,
+  "runs": [
+    "1-recovery-single",
+    "1-recovery-round_robin",
+    "1-recovery-adaptive",
+    "1-recovery-least_outstanding",
+    "2-recovery-single",
+    "2-recovery-round_robin",
+    "2-recovery-adaptive",
+    "2-recovery-least_outstanding",
+    "3-recovery-round_robin",
+    "3-recovery-single",
+    "3-recovery-adaptive",
+    "3-recovery-least_outstanding"
+  ],
+  "policies": [
+    "single",
+    "round_robin",
+    "least_outstanding",
+    "adaptive"
+  ],
+  "base_revision": "e991f82c1f144275c535f4d4f054d38d191ebb3f",
+  "raw_run_directory": "phase8-recovery",
+  "artifacts": [
+    {
+      "run": "1-recovery-single",
+      "faults": [
+        {
+          "at": 0.5735575000289828,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.9354260999243706,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 5.413302100030705,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "1-recovery-single/gateway.yaml": "3a340a27e0109e9fdb2dc6d87a450be55d6428f92d2753736c49ca672e09707f",
+        "1-recovery-single/run.json": "1b9a9020dc8bbe11ecd881c1c10a3ca61ea5da87c5d8ed05661b7168cd35009c",
+        "1-recovery-single/requests.jsonl": "4233be0679202b3221e90f96cfb37ddb69187d2e417ab18bdb290baf88d48cf7",
+        "1-recovery-single/gateway.log": "5a2e7d0dca51e4ac01d1e1612055d1d36d95dcfc528bd4400275acaf265cc5e7",
+        "1-recovery-single/attempts.jsonl": "8a32cda672f277b4263f888786b0b203e29c30b7e2f52a0e05f2ee0a8cbc80b8",
+        "trace-1-recovery.json": "820746d28d3285725169dde52595ea4507d251720773d6f7030d7173da763d9e",
+        "1-recovery-single/worker-1-restarted.log": "6f958caa879eddedf59096de934fca9fdd1869807d4e2e00fa94e98686cd100a"
+      }
+    },
+    {
+      "run": "1-recovery-round_robin",
+      "faults": [
+        {
+          "at": 0.5723653000313789,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.9528791999910027,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 5.386826900066808,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "1-recovery-round_robin/gateway.yaml": "0659591c3f4c5b85b89c87631f1c3e84ce66af6745dcfae9ecc5f1e871e0cfde",
+        "1-recovery-round_robin/run.json": "d8cec095f2fc1c7d739761c804c6c8a00aeeecfb81d59c113cd6454cde132c0c",
+        "1-recovery-round_robin/requests.jsonl": "2681da53b54a3cdf3104d114d5b324997e76dab6ff6d3008cca86f2902a2985b",
+        "1-recovery-round_robin/gateway.log": "1e2027b47e20a85a319989ef0f3e26a0a77dd615a75df69c0e88d73c8a86cb94",
+        "1-recovery-round_robin/attempts.jsonl": "37e0f1744c907924ac14935685f954ce717605183a0aa230a55874959a1f39b2",
+        "trace-1-recovery.json": "820746d28d3285725169dde52595ea4507d251720773d6f7030d7173da763d9e",
+        "1-recovery-round_robin/worker-1-restarted.log": "fa4551f9049d9cdd972ac5557c3b6ac9eb21921d6ff7a4967a97280aa3d99257"
+      }
+    },
+    {
+      "run": "1-recovery-adaptive",
+      "faults": [
+        {
+          "at": 0.5656079000327736,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.947716600028798,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 5.364470799919218,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "1-recovery-adaptive/gateway.yaml": "7ec175f989523d9719a3c9e31bc6a3c39c14b194b4b0463880aa18eb0f02f734",
+        "1-recovery-adaptive/run.json": "9064e7b04a73c1988689185612fdbb00dd93c4bf864c4ef6d693e267cbbf262e",
+        "1-recovery-adaptive/requests.jsonl": "8e9666408d102144897f80498681a5b8d01a5682030f8ba7ba0db24c67338baa",
+        "1-recovery-adaptive/gateway.log": "a84d6cc38fa7e3713cbd50007ea47a810723885e21648abaf4568f848fd8a19d",
+        "1-recovery-adaptive/attempts.jsonl": "9dd88c7495ceb49374278264ae9f8e529826e4650b4a7d84cf8bc6661ecd28e2",
+        "trace-1-recovery.json": "820746d28d3285725169dde52595ea4507d251720773d6f7030d7173da763d9e",
+        "1-recovery-adaptive/worker-1-restarted.log": "073fe4f8a7f3da97f1d72c7b20e571c107ad26b7a3f092e8100dd00ff84c3588"
+      }
+    },
+    {
+      "run": "1-recovery-least_outstanding",
+      "faults": [
+        {
+          "at": 0.5752669000066817,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.9496186999604106,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 5.887336699990556,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "1-recovery-least_outstanding/gateway.yaml": "dc5607a357d7e43092572622b33444989ab0cb4588809e7af05bb5e0212765e3",
+        "1-recovery-least_outstanding/run.json": "26e0498b3ecb290c6ca8de6470ea3489eff930649119e633d3a36c5ca33bab4b",
+        "1-recovery-least_outstanding/requests.jsonl": "84118fe76c4e8248b103ab1649b2a13522c4175a2250ab2b6fcb82b3ba2e1741",
+        "1-recovery-least_outstanding/gateway.log": "f2fcf52c7dfefd7f55f665fda8469f6b682e00bd463b03f41a88d41424da25fa",
+        "1-recovery-least_outstanding/attempts.jsonl": "aaee186d28b61b69bb5492d6fb003fe89a866d5499556cc1364f8262f9309ba0",
+        "trace-1-recovery.json": "820746d28d3285725169dde52595ea4507d251720773d6f7030d7173da763d9e",
+        "1-recovery-least_outstanding/worker-1-restarted.log": "142cef4bcd2e660f7ebfc95efd75741834bd4491faf50b445c220c0520acaf13"
+      }
+    },
+    {
+      "run": "2-recovery-single",
+      "faults": [
+        {
+          "at": 0.5647407001815736,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.9636168000288308,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 5.3593008001334965,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "2-recovery-single/gateway.yaml": "3a340a27e0109e9fdb2dc6d87a450be55d6428f92d2753736c49ca672e09707f",
+        "2-recovery-single/run.json": "3cb774283e236e80ecb67da525fb83962b51104b1e5a4158137853cd10beabcf",
+        "2-recovery-single/requests.jsonl": "405ebe54f19b312dadb25385fabaf9a654239ee7ae509f9a70932383bb3ad16a",
+        "2-recovery-single/gateway.log": "d10111720537d40d0e307d26f51189987bc515c0a73c32c64da395df137299fc",
+        "2-recovery-single/attempts.jsonl": "ebdc9ba8f85f5067850c54f22474d2b6104e2882a695d25c352278da97fc1b6c",
+        "trace-2-recovery.json": "d9ea5f67a57e1a98d6de598241330fadd1dc3a979ef897b5ef0c8152b0d1b852",
+        "2-recovery-single/worker-1-restarted.log": "5b46022b7faf47352c2ba997229069a25d90443b13818b85854e99de7725817a"
+      }
+    },
+    {
+      "run": "2-recovery-round_robin",
+      "faults": [
+        {
+          "at": 0.5716943999286741,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.9727175999432802,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 5.365954999811947,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "2-recovery-round_robin/gateway.yaml": "0659591c3f4c5b85b89c87631f1c3e84ce66af6745dcfae9ecc5f1e871e0cfde",
+        "2-recovery-round_robin/run.json": "46e03dac12f6d18307e6078ea4a128ee3bc442c7a4250e1c3fd0c508e5e00e7f",
+        "2-recovery-round_robin/requests.jsonl": "1aacb4f5e709048ad5d6637bbb456cb8907df8ab2975a3c95d9a501a8733510b",
+        "2-recovery-round_robin/gateway.log": "4ec1c536b076edaa1ec0d3a5b20aad4c959b6e7827f09913b071132a68e8b25e",
+        "2-recovery-round_robin/attempts.jsonl": "dc4b98bb0eba2cbdbb747500143efc1d63b9872fd4523462b763d39ffaedf666",
+        "trace-2-recovery.json": "d9ea5f67a57e1a98d6de598241330fadd1dc3a979ef897b5ef0c8152b0d1b852",
+        "2-recovery-round_robin/worker-1-restarted.log": "30f8fafe3fb0d26eaefd910a5def558627c9aa10cd1321a7809393113bbcf314"
+      }
+    },
+    {
+      "run": "2-recovery-adaptive",
+      "faults": [
+        {
+          "at": 0.5725482001435012,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.9521032001357526,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 8.652778600109741,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "2-recovery-adaptive/gateway.yaml": "7ec175f989523d9719a3c9e31bc6a3c39c14b194b4b0463880aa18eb0f02f734",
+        "2-recovery-adaptive/run.json": "ea398df1e1dd23de0054748152422456500316ddef4bdb2571441dd22d77dcdb",
+        "2-recovery-adaptive/requests.jsonl": "fe8c76dd3721933efa01ba98b8bb0d0d26b1e38fd297aaaba9c4ed9779cd2333",
+        "2-recovery-adaptive/gateway.log": "4bc023740593cd48d31f470da41f7a1a176bdf63b05b5b2082cff99e67865e63",
+        "2-recovery-adaptive/attempts.jsonl": "770b5439e06020a7b9d70c9c6b38baded26c6fc81f7f8b13cca30e043787d504",
+        "trace-2-recovery.json": "d9ea5f67a57e1a98d6de598241330fadd1dc3a979ef897b5ef0c8152b0d1b852",
+        "2-recovery-adaptive/worker-1-restarted.log": "ffd5a2963f70dd9b26c22cd48c1351b25d7d3fcf531b8279fe0cfb942e758306"
+      }
+    },
+    {
+      "run": "2-recovery-least_outstanding",
+      "faults": [
+        {
+          "at": 0.5676943000871688,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.9538972000591457,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 8.72413790016435,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "2-recovery-least_outstanding/gateway.yaml": "dc5607a357d7e43092572622b33444989ab0cb4588809e7af05bb5e0212765e3",
+        "2-recovery-least_outstanding/run.json": "b8b94c7d3095d1414f746f08560d3e164d5de1ac103a2e776f50360f76da015d",
+        "2-recovery-least_outstanding/requests.jsonl": "aa139991a8e4bf250c8d7581886b9add280c58c9904b4756bd9b356434f28feb",
+        "2-recovery-least_outstanding/gateway.log": "997be750a3f9215d4e2854c2d629f5362a3b8c04b83be9d24cc1fa0446bf2e8c",
+        "2-recovery-least_outstanding/attempts.jsonl": "bcf110e99de8d551363de9f82f9f1dded1ce9ce9f6b620f06d3eb85bba23c753",
+        "trace-2-recovery.json": "d9ea5f67a57e1a98d6de598241330fadd1dc3a979ef897b5ef0c8152b0d1b852",
+        "2-recovery-least_outstanding/worker-1-restarted.log": "b7de56a01cc23458cf5a95647eade76b713b38cf359764a045c88e56549bcbcb"
+      }
+    },
+    {
+      "run": "3-recovery-round_robin",
+      "faults": [
+        {
+          "at": 0.5766792001668364,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.949534600134939,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 5.84964120015502,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "3-recovery-round_robin/gateway.yaml": "0659591c3f4c5b85b89c87631f1c3e84ce66af6745dcfae9ecc5f1e871e0cfde",
+        "3-recovery-round_robin/run.json": "45676af0ad272d404572e5a035d25cbd3637220b1c7afa774e52787a9762d6a9",
+        "3-recovery-round_robin/requests.jsonl": "b90df16eb4e46e01eb540fcb3441584443c24aff03d6d77b7ff20724d6624abf",
+        "3-recovery-round_robin/gateway.log": "2c32a3fb2c8585600a56ec2050147c130951d9a3755c5e1f80564e8968e2e8af",
+        "3-recovery-round_robin/attempts.jsonl": "dd9612d6b7b27f16c008acb452b26201dc2257697fa15302c8a40e50b78699ca",
+        "trace-3-recovery.json": "d3da40bcca8036f4eccfb2a58c21344e5d296a6a4663892ee87b711cc0293132",
+        "3-recovery-round_robin/worker-1-restarted.log": "f1ab4b0f089da7eb30739c0e3e53d4b9047531c8f91cdea0046c0ac94884b596"
+      }
+    },
+    {
+      "run": "3-recovery-single",
+      "faults": [
+        {
+          "at": 0.573312200140208,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.9510104001965374,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 7.618947100127116,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "3-recovery-single/gateway.yaml": "3a340a27e0109e9fdb2dc6d87a450be55d6428f92d2753736c49ca672e09707f",
+        "3-recovery-single/run.json": "e4586657aff453308042188f41e49a5176a3b202403155fa509c80abd20aef66",
+        "3-recovery-single/requests.jsonl": "d3b5419e8bc4ac497bdc01bc37526aa63f3aa3fb07b412afc147ed5239bc11b9",
+        "3-recovery-single/gateway.log": "b9cf77c325eba0b3b2324b14de79e5fc22c33385f190b618f1918147f5bc4e4a",
+        "3-recovery-single/attempts.jsonl": "c039c32940344377589cbf717aca2f3699923f85d0532d9fd6b3c914962097f3",
+        "trace-3-recovery.json": "d3da40bcca8036f4eccfb2a58c21344e5d296a6a4663892ee87b711cc0293132",
+        "3-recovery-single/worker-1-restarted.log": "88e88ab42571ac936811a056ca8ffbff2eec3b7e9c2329e4970bfa0616fce1bb"
+      }
+    },
+    {
+      "run": "3-recovery-adaptive",
+      "faults": [
+        {
+          "at": 0.5598259000107646,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.9427616000175476,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 5.891113900113851,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "3-recovery-adaptive/gateway.yaml": "7ec175f989523d9719a3c9e31bc6a3c39c14b194b4b0463880aa18eb0f02f734",
+        "3-recovery-adaptive/run.json": "6bf5b4692e449b3cd2cddd9484622254d5cba36f78e3db065fe95ea5b8e86aaf",
+        "3-recovery-adaptive/requests.jsonl": "19b3b4c0cae27e09d675181a3b2746ebe33f11b019c7f3632daa3845e1e7ae12",
+        "3-recovery-adaptive/gateway.log": "8d3d93842b7180aa883c24d5a9683ab798b8977cda7183d09ac5daf5650c0e0d",
+        "3-recovery-adaptive/attempts.jsonl": "a4ae7d18c0e460ddd5f3529ef4d8355f4c6736f79a72eeba4d9a49d63e9d4a70",
+        "trace-3-recovery.json": "d3da40bcca8036f4eccfb2a58c21344e5d296a6a4663892ee87b711cc0293132",
+        "3-recovery-adaptive/worker-1-restarted.log": "c64691c1d4e0da6fb969dfde342f31e92f9b5c5777dc1742246761eddba1c5a1"
+      }
+    },
+    {
+      "run": "3-recovery-least_outstanding",
+      "faults": [
+        {
+          "at": 0.5841243998147547,
+          "event": "worker-1 stopped"
+        },
+        {
+          "at": 0.9597630999051034,
+          "event": "worker-1 restart launched"
+        },
+        {
+          "at": 7.614137399941683,
+          "event": "worker-1 ready"
+        }
+      ],
+      "files": {
+        "3-recovery-least_outstanding/gateway.yaml": "dc5607a357d7e43092572622b33444989ab0cb4588809e7af05bb5e0212765e3",
+        "3-recovery-least_outstanding/run.json": "7694c10fa72f0cee49ec0e54d866b90aba6daa0824ea8886d621d0e12a9d3b1c",
+        "3-recovery-least_outstanding/requests.jsonl": "efb41df844de66138a5159693cb0a6ede9d45c6a1de4db79fd9d33de2c8385f3",
+        "3-recovery-least_outstanding/gateway.log": "18f203167679395e0d3b8724e5a1f96d9e97d1a5d344b4254830daddc0d868ba",
+        "3-recovery-least_outstanding/attempts.jsonl": "43b2d0166fa41ef2f7fafc45e7e9ec3356ae0db345e7364db5678107ec6c2e71",
+        "trace-3-recovery.json": "d3da40bcca8036f4eccfb2a58c21344e5d296a6a4663892ee87b711cc0293132",
+        "3-recovery-least_outstanding/worker-1-restarted.log": "eb9f79f09fc2730db6fba5d95e42ffb717f2ff83d6a71a3c207fea96c436fe2f"
+      }
+    }
+  ]
+}

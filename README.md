@@ -48,6 +48,8 @@ Setup was checked on Windows using a CPU-only Python environment.
   status page shows queue depth, assignments, and service estimates.
 - The gateway can retry transient worker failures and reconcile uncertain
   attempts. See the [recovery and LAN guide](docs/recovery.md).
+- The benchmark replays matched workloads and reports latency, throughput,
+  and request outcomes. See the [benchmark guide](docs/benchmark.md).
 
 The configuration describes one gateway and three loopback workers. Each
 future worker will have one inference slot. The gateway will own its queues
@@ -60,7 +62,7 @@ implemented. The configured locality is for demonstration.
 
 ## Next milestones
 
-Phase 8 will compare the scheduling policies under controlled workloads.
+Phase 9 will package the demonstration and submission materials.
 
 Later experiments will compare round-robin, least-outstanding, and estimated
 completion time with a fixed model and matched workloads. See the
