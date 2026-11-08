@@ -1,1 +1,2 @@
 /data/manifests/** text eol=lf
+/docs/experiments/phase2/*.json text eol=lf

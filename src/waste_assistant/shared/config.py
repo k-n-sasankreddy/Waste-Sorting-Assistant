@@ -61,6 +61,15 @@ class DatasetSettings(Contract):
     same_object_groups: Path | None = None
 
 
+class ModelSettings(Contract):
+    artifact_dir: Path
+    seed: Annotated[int, Field(ge=0, le=2**32 - 1)]
+    batch_size: PositiveInt
+    head_epochs: PositiveInt
+    learning_rate: PositiveFloat
+    cpu_threads: PositiveInt
+
+
 class Settings(Contract):
     gateway_port: Annotated[int, Field(ge=1, le=65535)]
     locality_id: Identifier
@@ -69,6 +78,7 @@ class Settings(Contract):
     adaptive: AdaptiveSettings
     workers: Annotated[list[WorkerSettings], Field(min_length=1)]
     dataset: DatasetSettings | None = None
+    model: ModelSettings | None = None
 
     @model_validator(mode="after")
     def check_worker_uniqueness(self) -> Self:

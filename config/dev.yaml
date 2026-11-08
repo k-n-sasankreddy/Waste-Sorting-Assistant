@@ -7,6 +7,13 @@ dataset:
   source_url: https://github.com/garythung/trashnet/blob/6fa2b878c6c1b4304b91109070ce0edf9279bb31/data/dataset-resized.zip
   seed: 42
   near_duplicate_distance: 4
+model:
+  artifact_dir: artifacts/models/mobilenet-v3-small
+  seed: 42
+  batch_size: 32
+  head_epochs: 30
+  learning_rate: 0.003
+  cpu_threads: 4
 limits:
   max_upload_bytes: 5242880
   max_decoded_pixels: 20000000

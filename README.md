@@ -35,6 +35,9 @@ Setup was checked on Windows using a CPU-only Python environment.
   the installed package, and the API prediction schema rejects its score type.
 - The offline dataset command audits TrashNet and produces reproducible,
   group-aware splits. See the [dataset instructions](docs/dataset.md).
+- The offline model commands train a six-class MobileNetV3-Small classifier,
+  evaluate the saved model, and classify local photos. See the
+  [model instructions and results](docs/model.md).
 
 The configuration describes one gateway and three loopback workers. Each
 future worker will have one inference slot. The gateway will own its queues
@@ -47,11 +50,9 @@ implemented. The configured locality is for demonstration.
 
 ## Next milestones
 
-Phase 2 will train and evaluate a transfer-learning classifier offline from the
-Phase 1 manifests and export its weights, class mapping, and preprocessing.
-That will be the first real model. Serving workers
-will load that artifact and use it to predict categories for new images. Phase 4
-will deliver the first upload-to-guidance flow.
+Phase 3 will wrap the exported classifier in one inference worker that loads
+the artifact at startup. Phase 4 will deliver the first upload-to-guidance
+flow.
 
 Later experiments will compare round-robin, least-outstanding, and estimated
 completion time with a fixed model and matched workloads. See the

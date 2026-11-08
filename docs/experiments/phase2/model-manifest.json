@@ -1,0 +1,209 @@
+{
+  "format_version": 1,
+  "architecture": "mobilenet_v3_small",
+  "labels": [
+    "cardboard",
+    "glass",
+    "metal",
+    "paper",
+    "plastic",
+    "trash"
+  ],
+  "preprocessing": {
+    "version": "rgb-exif-resize-crop-v1",
+    "resize_short_edge": 256,
+    "crop_size": 224,
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "interpolation": "bilinear",
+    "max_pixels": 20000000
+  },
+  "threshold": 0.6280099153518677,
+  "weights_sha256": "55e9bdf7f40a1be5028f124e026627e52c2a39d084cb6ccf6467970fa4aca52f",
+  "training": {
+    "pretrained": "IMAGENET1K_V1",
+    "pretrained_url": "https://download.pytorch.org/models/mobilenet_v3_small-047dcff4.pth",
+    "method": "frozen_features_linear_head_with_horizontal_flip",
+    "settings": {
+      "seed": 42,
+      "batch_size": 32,
+      "head_epochs": 30,
+      "learning_rate": 0.003,
+      "cpu_threads": 4
+    },
+    "train_manifest_sha256": "506a21cd0b823fb925ee1d7c52eef6e2391e1220f7a41a2d6ff7f0cf58ec8abb",
+    "validation_manifest_sha256": "b0e809190b5b2b6b34b301d4e18c2ea1d74d0ed41cffc53a44888ae2b234e13d",
+    "selected_epoch": 7,
+    "validation_history": [
+      {
+        "epoch": 1,
+        "accuracy": 0.8315789473684211,
+        "macro_f1": 0.8148218893255571
+      },
+      {
+        "epoch": 2,
+        "accuracy": 0.8473684210526315,
+        "macro_f1": 0.82644906964756
+      },
+      {
+        "epoch": 3,
+        "accuracy": 0.8552631578947368,
+        "macro_f1": 0.8376957219076231
+      },
+      {
+        "epoch": 4,
+        "accuracy": 0.85,
+        "macro_f1": 0.8311384450826628
+      },
+      {
+        "epoch": 5,
+        "accuracy": 0.8394736842105263,
+        "macro_f1": 0.8202678891053573
+      },
+      {
+        "epoch": 6,
+        "accuracy": 0.8447368421052631,
+        "macro_f1": 0.8286143029064043
+      },
+      {
+        "epoch": 7,
+        "accuracy": 0.8578947368421053,
+        "macro_f1": 0.8383628835999347
+      },
+      {
+        "epoch": 8,
+        "accuracy": 0.85,
+        "macro_f1": 0.8323505906005373
+      },
+      {
+        "epoch": 9,
+        "accuracy": 0.8473684210526315,
+        "macro_f1": 0.8264697868412085
+      },
+      {
+        "epoch": 10,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.8207531072869673
+      },
+      {
+        "epoch": 11,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.8221518945377161
+      },
+      {
+        "epoch": 12,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.8206896386979857
+      },
+      {
+        "epoch": 13,
+        "accuracy": 0.8473684210526315,
+        "macro_f1": 0.8300341101469098
+      },
+      {
+        "epoch": 14,
+        "accuracy": 0.8447368421052631,
+        "macro_f1": 0.8262553250105662
+      },
+      {
+        "epoch": 15,
+        "accuracy": 0.8394736842105263,
+        "macro_f1": 0.8216938110225321
+      },
+      {
+        "epoch": 16,
+        "accuracy": 0.8394736842105263,
+        "macro_f1": 0.8197605976268494
+      },
+      {
+        "epoch": 17,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.823657993075901
+      },
+      {
+        "epoch": 18,
+        "accuracy": 0.8394736842105263,
+        "macro_f1": 0.8212765428491905
+      },
+      {
+        "epoch": 19,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.820518968195285
+      },
+      {
+        "epoch": 20,
+        "accuracy": 0.8394736842105263,
+        "macro_f1": 0.8188136089395943
+      },
+      {
+        "epoch": 21,
+        "accuracy": 0.8368421052631579,
+        "macro_f1": 0.8173287392495728
+      },
+      {
+        "epoch": 22,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.8236825596212501
+      },
+      {
+        "epoch": 23,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.8234069073428639
+      },
+      {
+        "epoch": 24,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.823657993075901
+      },
+      {
+        "epoch": 25,
+        "accuracy": 0.8394736842105263,
+        "macro_f1": 0.8210254571161534
+      },
+      {
+        "epoch": 26,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.8234989579280044
+      },
+      {
+        "epoch": 27,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.8234989579280044
+      },
+      {
+        "epoch": 28,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.8255731724877218
+      },
+      {
+        "epoch": 29,
+        "accuracy": 0.8368421052631579,
+        "macro_f1": 0.8173410116215538
+      },
+      {
+        "epoch": 30,
+        "accuracy": 0.8421052631578947,
+        "macro_f1": 0.8234206800037375
+      }
+    ],
+    "validation_abstention": {
+      "threshold": 0.6280099153518677,
+      "accepted": 340,
+      "coverage": 0.8947368421052632,
+      "accepted_accuracy": 0.9
+    },
+    "versions": {
+      "python": "3.12.14",
+      "torch": "2.12.0+cpu",
+      "torchvision": "0.27.0+cpu"
+    }
+  }
+}

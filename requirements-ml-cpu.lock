@@ -1,0 +1,12 @@
+# Install after requirements-dev.lock on Windows or Linux x64.
+--index-url https://download.pytorch.org/whl/cpu
+filelock==4.2.4
+fsspec==2026.9.0
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+mpmath==1.3.0
+networkx==3.7
+numpy==2.5.4
+sympy==1.14.0
+torch==2.12.0+cpu
+torchvision==0.27.0+cpu
