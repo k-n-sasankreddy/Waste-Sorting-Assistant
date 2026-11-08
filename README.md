@@ -1,10 +1,13 @@
 # Waste Sorting Assistant
 
 The project pairs single-item waste image classification with an experiment in
-distributed inference. The planned app sends a photo to a gateway. The gateway
+distributed inference. The app sends a photo to a gateway. The gateway
 assigns it to a worker running a full copy of the classifier, interprets the
 prediction, and looks up guidance for the selected locality. A material
 prediction alone cannot determine how an item should be discarded.
+
+[Install the full stack](docs/install.md) · [Rehearse the demo](docs/runbook.md)
+· [Architecture](docs/architecture.md) · [Submission report](docs/submission.md)
 
 ## Development setup
 
@@ -28,9 +31,9 @@ Setup was checked on Windows using a CPU-only Python environment.
 
 - `shared.config.load_settings()` reads `config/dev.yaml` and validates worker
   addresses, scheduling settings, and request and queue limits. Model paths are
-  relative to the repository root and are reserved for a later phase.
+  relative to the repository root.
 - `shared.schemas` defines the multipart metadata, predictions, worker status,
-  guidance, and errors that the future services will exchange.
+  guidance, and errors exchanged by the services.
 - The pytest fixture returns a fixed, explicitly synthetic score. It is outside
   the installed package, and the API prediction schema rejects its score type.
 - The offline dataset command audits TrashNet and produces reproducible,
@@ -51,19 +54,12 @@ Setup was checked on Windows using a CPU-only Python environment.
 - The benchmark replays matched workloads and reports latency, throughput,
   and request outcomes. See the [benchmark guide](docs/benchmark.md).
 
-The configuration describes one gateway and three loopback workers. Each
-future worker will have one inference slot. The gateway will own its queues
-in memory, so it will run as one process and remain a single point of failure.
-Proposed admission limits include a 5 MiB upload cap, 64 outstanding requests,
-16 waiting jobs per worker, and a 64 MiB combined queued-image budget.
-The byte budget covers waiting image payloads. In-flight uploads, active
-inference, and decoded images will require their own bounds when serving is
-implemented. The configured locality is for demonstration.
+The default setup uses one gateway and three loopback workers. Each worker
+has one inference slot. The gateway stores queues in memory and remains a
+single point of failure. Defaults cap uploads at 5 MiB, outstanding
+requests at 64, waiting jobs at 16 per worker, and queued image payloads
+at 64 MiB. Uploads and active requests count toward the outstanding limit.
+The configured locality is for demonstration.
 
-## Next milestones
-
-Phase 9 will package the demonstration and submission materials.
-
-Later experiments will compare round-robin, least-outstanding, and estimated
-completion time with a fixed model and matched workloads. See the
-[phase tracker](docs/progress.md) for the current checkpoint.
+The [phase tracker](docs/progress.md) records verification and remaining
+evaluation limitations.
