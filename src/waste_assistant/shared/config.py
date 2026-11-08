@@ -26,6 +26,8 @@ class Limits(Contract):
     max_waiting_per_worker: PositiveInt
     max_queued_image_bytes: PositiveInt
     request_budget_seconds: PositiveFloat
+    attempt_timeout_seconds: PositiveFloat = 4.0
+    min_retry_budget_ms: PositiveInt = 200
     health_poll_seconds: PositiveFloat
     status_stale_seconds: PositiveFloat
     max_retries: Literal[0, 1]

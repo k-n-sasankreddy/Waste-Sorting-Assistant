@@ -35,6 +35,7 @@ class WorkerExecutor:
         self.label_mapping_version: str | None = None
         self.busy = False
         self.attempt_id: str | None = None
+        self.last_finished_attempt_id: str | None = None
         self.completed = 0
         self.failed = 0
         self.last_processing_ms: float | None = None
@@ -77,7 +78,9 @@ class WorkerExecutor:
         self.busy = True
         return True
 
-    def release(self) -> None:
+    def release(self, finished_attempt_id: str | None = None) -> None:
+        if finished_attempt_id is not None:
+            self.last_finished_attempt_id = finished_attempt_id
         self.busy = False
         self.attempt_id = None
 
@@ -117,7 +120,7 @@ class WorkerExecutor:
             self.completed += 1
             self.last_processing_ms = result.processing_ms
         finally:
-            self.release()
+            self.release(self.attempt_id)
 
     def status(self) -> WorkerStatus:
         artifact = self.predictor.artifact if self.predictor else None
@@ -127,6 +130,7 @@ class WorkerExecutor:
             ready=artifact is not None,
             busy=self.busy,
             current_attempt_id=self.attempt_id,
+            last_finished_attempt_id=self.last_finished_attempt_id,
             model_version=artifact.model_version if artifact else None,
             preprocessing_version=artifact.preprocessing.version if artifact else None,
             label_mapping_version=self.label_mapping_version,

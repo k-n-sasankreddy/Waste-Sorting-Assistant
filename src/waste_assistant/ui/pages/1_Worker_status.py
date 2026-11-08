@@ -30,6 +30,7 @@ def show_status() -> None:
         return
 
     st.write("Policy · " + status["policy"].replace("_", " "))
+    st.caption(f"Retries · {status['retries']}")
     requests, images = st.columns(2)
     requests.metric(
         "Outstanding requests", f"{status['outstanding']} / {status['max_outstanding']}"
@@ -45,6 +46,7 @@ def show_status() -> None:
                 "Eligible": worker["available"],
                 "Waiting": worker["waiting"],
                 "Active": worker["active"],
+                "Quarantined": worker["quarantined"],
                 "Assigned": worker["assigned"],
                 "Completed": worker["completed"],
                 "Estimated service (ms)": round(worker["estimated_service_ms"], 2)

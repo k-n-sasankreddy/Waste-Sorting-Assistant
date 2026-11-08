@@ -81,6 +81,7 @@ def create_app(settings: Settings, worker: WorkerSettings) -> FastAPI:
             )
 
         submitted = False
+        fields = None
         loop = asyncio.get_running_loop()
         start = loop.time()
         budget = settings.limits.request_budget_seconds
@@ -112,7 +113,7 @@ def create_app(settings: Settings, worker: WorkerSettings) -> FastAPI:
             )
         finally:
             if not submitted:
-                executor.release()
+                executor.release(fields.attempt_id if fields is not None else None)
 
     return app
 

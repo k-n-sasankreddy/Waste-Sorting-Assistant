@@ -46,6 +46,8 @@ Setup was checked on Windows using a CPU-only Python environment.
 - The gateway distributes requests across three local model replicas using
   round-robin, least-outstanding, or estimated completion time. The Worker
   status page shows queue depth, assignments, and service estimates.
+- The gateway can retry transient worker failures and reconcile uncertain
+  attempts. See the [recovery and LAN guide](docs/recovery.md).
 
 The configuration describes one gateway and three loopback workers. Each
 future worker will have one inference slot. The gateway will own its queues
@@ -58,7 +60,7 @@ implemented. The configured locality is for demonstration.
 
 ## Next milestones
 
-Phase 7 will cover worker failure, recovery, and LAN execution.
+Phase 8 will compare the scheduling policies under controlled workloads.
 
 Later experiments will compare round-robin, least-outstanding, and estimated
 completion time with a fixed model and matched workloads. See the

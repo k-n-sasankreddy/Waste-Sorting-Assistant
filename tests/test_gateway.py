@@ -26,11 +26,9 @@ def gateway(monkeypatch):
     upstream = {"score": 0.8, "label": "plastic", "status": 200, "calls": 0}
 
     async def worker(request):
-        if request.url.path != "/ready":
+        if request.url.path != "/status":
             upstream["calls"] += 1
-        if upstream["status"] != 200:
-            return httpx.Response(upstream["status"])
-        if request.url.path == "/ready":
+        if request.url.path == "/status":
             return httpx.Response(
                 200,
                 json={
@@ -44,6 +42,8 @@ def gateway(monkeypatch):
                     "warmup_ms": 5,
                 },
             )
+        if upstream["status"] != 200:
+            return httpx.Response(upstream["status"])
         if "started" in upstream:
             upstream["started"].set()
             assert await asyncio.to_thread(upstream["release"].wait, 5)
@@ -111,15 +111,16 @@ def test_gateway_rejects_locality_and_maps_upstream_failures(gateway):
     reply = classify(client, locality="unsupported")
     assert reply.status_code == 422 and reply.json()["code"] == "unsupported_locality"
     assert upstream["calls"] == 0
-    upstream["status"] = 429
-    assert classify(client).status_code == 429
-    upstream["status"] = 504
-    assert classify(client).status_code == 504
-    upstream["status"] = 503
-    assert classify(client).status_code == 503
     assert client.get("/health").status_code == 200
-    upstream.update(status=200, attempt_id="wrong")
+    upstream["attempt_id"] = "wrong"
     assert classify(client).status_code == 503
+
+
+@pytest.mark.parametrize("status", [429, 503, 504])
+def test_gateway_maps_worker_errors_without_a_second_worker(gateway, status):
+    client, upstream = gateway
+    upstream["status"] = status
+    assert classify(client).status_code == status
 
 
 def test_gateway_rejects_second_upload_without_forwarding_it(gateway):

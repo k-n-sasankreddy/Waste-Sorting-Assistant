@@ -77,6 +77,7 @@ class WorkerStatus(Contract):
     ready: bool
     busy: bool
     current_attempt_id: NonEmpty | None = None
+    last_finished_attempt_id: NonEmpty | None = None
     model_version: NonEmpty | None = None
     preprocessing_version: NonEmpty | None = None
     label_mapping_version: NonEmpty | None = None

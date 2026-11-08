@@ -35,7 +35,8 @@ pixels, and rejects additional requests with 429 while the slot is occupied.
 There is no inference queue inside the worker. Early errors may carry a
 worker-generated request ID because the multipart metadata has yet to be
 read. Inference runs on a dedicated thread so health and status can respond
-while the classifier runs.
+while the classifier runs. The status includes the last finished attempt
+ID so the gateway can reconcile a lost response.
 [FastAPI concurrency model](https://fastapi.tiangolo.com/async/)
 
 The request budget is measured from worker admission, includes upload time,

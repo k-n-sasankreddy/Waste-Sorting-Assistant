@@ -23,6 +23,8 @@ limits:
   max_waiting_per_worker: 16
   max_queued_image_bytes: 67108864
   request_budget_seconds: 10.0
+  attempt_timeout_seconds: 4.0
+  min_retry_budget_ms: 200
   health_poll_seconds: 1.0
   status_stale_seconds: 3.0
   max_retries: 1

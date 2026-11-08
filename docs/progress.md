@@ -105,5 +105,19 @@ External real-world classifier evaluation remains open.
   went to worker 3. This check demonstrates routing feedback under one
   controlled slowdown.
 
-Phase 7 starts on request and will cover worker failure, recovery, and LAN
-execution.
+## Phase 7 — Worker recovery and LAN setup
+
+- Added bounded dispatch timeouts and retries, reassignment of queued jobs
+  under their original deadlines, and quarantine for uncertain attempts.
+- Workers now report the last finished attempt. The gateway reconciles
+  uncertain slots by exact attempt ID or a changed boot ID. The dashboard
+  shows quarantined slots and retries.
+- Verified 16 successful uploads with two retries in a live three-worker
+  localhost run. A delayed attempt retained its slot until completion, and
+  a worker stopped during a burst rejoined under a new boot ID after restart.
+  All 23 tests and Ruff checks passed.
+- Documented [LAN setup](recovery.md). A separate LAN host was unavailable
+  for verification.
+
+Phase 8 starts on request and will compare policies with reproducible
+workloads and reports.

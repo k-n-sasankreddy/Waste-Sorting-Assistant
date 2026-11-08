@@ -12,7 +12,7 @@ from fastapi import FastAPI, Request, Response
 from pydantic import ValidationError
 from starlette.responses import JSONResponse
 
-from waste_assistant.gateway.pool import Job, WorkerPool
+from waste_assistant.gateway.pool import Job, TransientWorkerError, WorkerPool
 from waste_assistant.guidance.rules import classify, load_rules
 from waste_assistant.shared.config import Settings, WorkerSettings, load_settings
 from waste_assistant.shared.http import (
@@ -35,7 +35,8 @@ async def infer_worker(
     client: httpx.AsyncClient, worker: WorkerSettings, job: Job
 ) -> InferenceResponse:
     request_id = job.request_id
-    attempt_id = uuid4().hex
+    attempt_id = job.attempt_id
+    assert attempt_id is not None
     remaining_ms = int((job.deadline - asyncio.get_running_loop().time()) * 1000)
     if remaining_ms < 1:
         raise TimeoutError
@@ -51,7 +52,11 @@ async def infer_worker(
     if reply.status_code == 504:
         raise TimeoutError
     if reply.status_code == 429:
-        raise RequestProblem(429, "worker_busy", "Try again in a moment.")
+        raise TransientWorkerError(429, "worker_busy", "Try again in a moment.")
+    if reply.status_code in (500, 503):
+        raise TransientWorkerError(
+            503, "worker_unavailable", "The classifier is unavailable."
+        )
     if reply.status_code == 413:
         raise RequestProblem(413, "upload_too_large", "Image exceeds the upload limit.")
     if reply.status_code == 422:
@@ -171,7 +176,7 @@ def create_app(
             )
         finally:
             if queued is not None:
-                pool.withdraw(*queued)
+                pool.withdraw(queued[1])
             elif reserved:
                 pool.uploading -= 1
 

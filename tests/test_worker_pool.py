@@ -118,8 +118,8 @@ def test_pool_bounds_fifo_and_checks_model_compatibility(policy, monkeypatch):
                     pool.reserve_upload()
                 pool.uploading -= 1
                 await asyncio.sleep(0.04)
-                expired_worker, expired = waiting.pop()
-                pool.withdraw(expired_worker, expired)
+                _, expired = waiting.pop()
+                pool.withdraw(expired)
                 assert pool.queued_bytes == 2 and pool.outstanding() == 3
                 waiting.append(add("fifth"))
                 release.set()
@@ -141,8 +141,8 @@ def test_pool_bounds_fifo_and_checks_model_compatibility(policy, monkeypatch):
                 with pytest.raises(RequestProblem, match="Worker queues are full"):
                     pool.enqueue("cap-3", b"x", pool.loop.time() + 3)
                 pool.uploading -= 1
-                for worker, job in capped:
-                    pool.withdraw(worker, job)
+                for _, job in capped:
+                    pool.withdraw(job)
                 assert pool.queued_bytes == 0 and pool.outstanding() == 0
                 if policy == "adaptive":
                     slow_worker, slow_job = add("slow")

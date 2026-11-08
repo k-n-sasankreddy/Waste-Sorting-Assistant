@@ -63,6 +63,7 @@ cumulative assignments and completions. The same data is available at
 `GET /v1/system/status`.
 This setup is local multi-process emulation. The workers share one machine
 and each loads a full copy of the model.
+See the [recovery and LAN guide](recovery.md) for retries and quarantine.
 
 The gateway pins the first ready model fingerprint in configuration order
 and checks each worker's model, preprocessing, and label-map versions.
