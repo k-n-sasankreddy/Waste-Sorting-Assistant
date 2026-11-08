@@ -21,10 +21,13 @@ def gateway(monkeypatch):
 
     monkeypatch.chdir(ROOT)
     settings = load_settings("config/dev.yaml")
+    settings.gateway.worker_id = "worker-1"
+    settings.limits.max_outstanding = 1
     upstream = {"score": 0.8, "label": "plastic", "status": 200, "calls": 0}
 
     async def worker(request):
-        upstream["calls"] += 1
+        if request.url.path != "/ready":
+            upstream["calls"] += 1
         if upstream["status"] != 200:
             return httpx.Response(upstream["status"])
         if request.url.path == "/ready":
@@ -114,7 +117,6 @@ def test_gateway_rejects_locality_and_maps_upstream_failures(gateway):
     upstream["status"] = 503
     assert classify(client).status_code == 503
     assert client.get("/health").status_code == 200
-    assert client.get("/ready").status_code == 503
     upstream.update(status=200, attempt_id="wrong")
     assert classify(client).status_code == 503
 

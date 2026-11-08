@@ -71,7 +71,7 @@ class ModelSettings(Contract):
 
 
 class GatewaySettings(Contract):
-    worker_id: Identifier
+    worker_id: Identifier | None = None
     rules_path: Path
 
 
@@ -92,9 +92,11 @@ class Settings(Contract):
             raise ValueError("Worker IDs must be unique")
         if len({worker.url for worker in self.workers}) != len(self.workers):
             raise ValueError("Worker URLs must be unique")
-        if self.gateway and self.gateway.worker_id not in {
-            worker.id for worker in self.workers
-        }:
+        if (
+            self.gateway
+            and self.gateway.worker_id
+            and self.gateway.worker_id not in {worker.id for worker in self.workers}
+        ):
             raise ValueError("Gateway worker ID must match a configured worker")
         return self
 

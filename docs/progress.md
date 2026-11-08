@@ -78,5 +78,17 @@ External real-world classifier evaluation remains open.
 - Dependency verification, all 14 tests, and Ruff lint and format checks
   passed. See the [local startup and API guide](demo.md).
 
-Phase 5 starts on request and will add multiple workers, gateway-owned
-bounded queues, and baseline scheduling policies.
+## Phase 5 — Worker pool and baseline scheduling
+
+- Added a worker registry, per-worker FIFO queues and dispatch tasks, and
+  atomic admission accounting for uploads, queued bytes, and active jobs.
+- Implemented round-robin and least-outstanding with rotating ties.
+  Added the gateway status endpoint and Streamlit Worker status page.
+- Ran 24 uploads per policy with up to 12 in flight against three real
+  model replicas on one machine. Each worker completed eight requests,
+  predictions matched across all replicas, and queues drained to zero.
+  This was a local multi-process smoke test.
+- Verified the dashboard against the live gateway. The test suite covers
+  queue bounds, expiration accounting, FIFO order, and incompatible models.
+
+Phase 6 starts on request and will add estimated-completion-time scheduling.
