@@ -47,12 +47,14 @@ class InferenceResponse(Contract):
     preprocessing_version: NonEmpty
     label_mapping_version: NonEmpty
     processing_ms: DurationMs
+    review_threshold: Score
 
 
 class Guidance(Contract):
     status: Literal["available", "needs_clarification", "unavailable"]
     locality_id: NonEmpty
     ruleset_id: NonEmpty | None = None
+    ruleset_status: Literal["demonstration_only"] | None = None
     message: NonEmpty
 
 

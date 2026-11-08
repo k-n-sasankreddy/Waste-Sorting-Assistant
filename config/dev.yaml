@@ -1,4 +1,7 @@
 gateway_port: 8000
+gateway:
+  worker_id: worker-1
+  rules_path: config/rules/demo.yaml
 locality_id: demo-locality
 policy: round_robin
 dataset:

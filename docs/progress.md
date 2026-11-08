@@ -66,5 +66,17 @@ External real-world classifier evaluation remains open.
 - All 11 tests and Ruff checks passed. Tests covered missing weights, oversized
   uploads, responsive health during inference, and slot retention after timeout.
 
-Phase 4 starts on request and will connect a single worker to a gateway with
-abstention, demo locality guidance, and the first user upload interface.
+## Phase 4 — Single-worker gateway and upload demo
+
+- Added the single-worker classification gateway and the Streamlit upload
+  form. The gateway bounds uploads, uses the worker's artifact threshold,
+  and applies the versioned demonstration ruleset.
+- Verified real uploads through the Streamlit form harness and live HTTP
+  gateway and worker. Paper returned demo guidance, cardboard prompted
+  review, and trash returned unavailable guidance. Invalid image bytes
+  returned 422 through the gateway.
+- Dependency verification, all 14 tests, and Ruff lint and format checks
+  passed. See the [local startup and API guide](demo.md).
+
+Phase 5 starts on request and will add multiple workers, gateway-owned
+bounded queues, and baseline scheduling policies.

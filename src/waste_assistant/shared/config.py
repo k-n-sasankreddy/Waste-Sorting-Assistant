@@ -70,6 +70,11 @@ class ModelSettings(Contract):
     cpu_threads: PositiveInt
 
 
+class GatewaySettings(Contract):
+    worker_id: Identifier
+    rules_path: Path
+
+
 class Settings(Contract):
     gateway_port: Annotated[int, Field(ge=1, le=65535)]
     locality_id: Identifier
@@ -79,6 +84,7 @@ class Settings(Contract):
     workers: Annotated[list[WorkerSettings], Field(min_length=1)]
     dataset: DatasetSettings | None = None
     model: ModelSettings | None = None
+    gateway: GatewaySettings | None = None
 
     @model_validator(mode="after")
     def check_worker_uniqueness(self) -> Self:
@@ -86,6 +92,10 @@ class Settings(Contract):
             raise ValueError("Worker IDs must be unique")
         if len({worker.url for worker in self.workers}) != len(self.workers):
             raise ValueError("Worker URLs must be unique")
+        if self.gateway and self.gateway.worker_id not in {
+            worker.id for worker in self.workers
+        }:
+            raise ValueError("Gateway worker ID must match a configured worker")
         return self
 
 

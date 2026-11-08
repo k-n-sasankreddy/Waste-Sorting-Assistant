@@ -1,0 +1,16 @@
+ruleset_id: demo-v1
+locality_id: demo-locality
+status: demonstration_only
+rules:
+  cardboard:
+    message: Identify coatings, tape, and food residue when checking local collection rules.
+  paper:
+    message: Check whether the paper is coated or has food residue before consulting local rules.
+  glass:
+    message: Identify whether the item is a container or another type of glass when checking local rules.
+  metal:
+    message: Identify whether the item is a can, foil, or another metal item when checking local rules.
+  plastic:
+    required_context: [item_type, contamination]
+    clarification: Add the plastic item type and indicate whether it has food or liquid residue.
+    message: Use the item type and contamination details to check your local collection rules.

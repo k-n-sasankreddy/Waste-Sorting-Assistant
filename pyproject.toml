@@ -14,6 +14,7 @@ dependencies = ["Pillow==13.0.0", "pydantic==2.12.5", "PyYAML==6.0.3"]
 dev = ["pytest==9.0.2", "ruff==0.15.0"]
 ml = ["torch==2.12.0", "torchvision==0.27.0"]
 worker = ["fastapi==0.162.2", "starlette==1.10.0", "uvicorn==0.54.0", "python-multipart==0.0.33"]
+demo = ["streamlit==1.67.0", "httpx==0.28.1"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

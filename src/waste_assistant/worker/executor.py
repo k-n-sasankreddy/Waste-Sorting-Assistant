@@ -105,6 +105,7 @@ class WorkerExecutor:
             preprocessing_version=predictor.artifact.preprocessing.version,
             label_mapping_version=self.label_mapping_version,
             processing_ms=processing_ms,
+            review_threshold=predictor.artifact.threshold,
         )
 
     def _finish(self, future: asyncio.Future[InferenceResponse]) -> None:

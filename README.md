@@ -40,6 +40,9 @@ Setup was checked on Windows using a CPU-only Python environment.
   [model instructions and results](docs/model.md).
 - The local inference worker loads that classifier once and accepts one image
   at a time over HTTP. See the [worker setup and API](docs/worker.md).
+- The Streamlit demo lets you upload a photo and see the predicted material,
+  review prompts, and demonstration guidance. See the
+  [three-terminal startup guide](docs/demo.md).
 
 The configuration describes one gateway and three loopback workers. Each
 future worker will have one inference slot. The gateway will own its queues
@@ -52,8 +55,8 @@ implemented. The configured locality is for demonstration.
 
 ## Next milestones
 
-Phase 4 will connect a single worker to a gateway and deliver the first
-upload-to-guidance flow.
+Phase 5 will add multiple workers, bounded gateway queues, and baseline
+scheduling policies.
 
 Later experiments will compare round-robin, least-outstanding, and estimated
 completion time with a fixed model and matched workloads. See the
